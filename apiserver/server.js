@@ -7,9 +7,13 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Update CORS to be more permissive during development
+// Update CORS to handle production URLs
 app.use(cors({
-  origin: '*',  // Allow all origins during development
+  origin: [
+    'http://localhost:3000',                          // Development
+    'https://gomarblereviewscrapper.vercel.app/',           // Production frontend
+    '*'          // Any other domains
+  ],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
@@ -34,34 +38,6 @@ app.get('/api/test', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
-
-// Add predefined selectors for common e-commerce sites
-const SITE_SELECTORS = {
-  amazon: {
-    reviewContainer: 'div[data-hook="review"]',
-    reviewText: 'span[data-hook="review-body"]',
-    rating: 'i[data-hook="review-star-rating"]',
-    authorName: 'span.a-profile-name',
-    reviewDate: 'span[data-hook="review-date"]',
-    paginationSelector: 'li.a-last > a'
-  },
-  shopify: {
-    reviewContainer: '.review',
-    reviewText: '.review__content',
-    rating: '.review__rating',
-    authorName: '.review__author',
-    reviewDate: '.review__date',
-    paginationSelector: '.pagination__next'
-  },
-  default: {
-    reviewContainer: '.review, [class*="review"], [id*="review"]',
-    reviewText: '.review-text, .review-content, [class*="review-text"]',
-    rating: '.rating, .stars, [class*="rating"]',
-    authorName: '.author, .reviewer, [class*="author"]',
-    reviewDate: '.date, .review-date, [class*="date"]',
-    paginationSelector: '.next, .pagination-next, [class*="next"]'
-  }
-};
 
 // Review extraction endpoint
 app.post('/api/extract-reviews', async (req, res) => {
@@ -113,39 +89,40 @@ app.post('/api/extract-reviews', async (req, res) => {
   }
 });
 
-// Update identifySelectors function
 async function identifySelectors(page) {
-  const url = page.url().toLowerCase();
-  
-  // Determine which selectors to use based on URL
-  if (url.includes('amazon.com')) {
-    return SITE_SELECTORS.amazon;
-  } else if (url.includes('shopify')) {
-    return SITE_SELECTORS.shopify;
-  }
+  const pageContent = await page.content();
+  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-  // Use default selectors if site is not recognized
-  return SITE_SELECTORS.default;
+  const prompt = `
+    Analyze this HTML content and identify the CSS selectors for:
+    1. Review container
+    2. Review text
+    3. Rating
+    4. Author name
+    5. Review date
+    6. Pagination next button
+    
+    Return only JSON format with these selectors.
+    HTML: ${pageContent}
+  `;
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  return JSON.parse(response.text());
 }
 
-// Update extractPageReviews to handle missing elements better
 async function extractPageReviews(page, selectors) {
   return await page.evaluate((sel) => {
     const reviews = [];
     const reviewElements = document.querySelectorAll(sel.reviewContainer);
 
     reviewElements.forEach(element => {
-      const review = {
-        text: element.querySelector(sel.reviewText)?.textContent?.trim() || 'No review text available',
-        rating: element.querySelector(sel.rating)?.textContent?.trim() || 'No rating available',
-        author: element.querySelector(sel.authorName)?.textContent?.trim() || 'Anonymous',
-        date: element.querySelector(sel.reviewDate)?.textContent?.trim() || 'No date available'
-      };
-
-      // Only add reviews that have at least some content
-      if (review.text !== 'No review text available' || review.rating !== 'No rating available') {
-        reviews.push(review);
-      }
+      reviews.push({
+        text: element.querySelector(sel.reviewText)?.textContent?.trim(),
+        rating: element.querySelector(sel.rating)?.textContent?.trim(),
+        author: element.querySelector(sel.authorName)?.textContent?.trim(),
+        date: element.querySelector(sel.reviewDate)?.textContent?.trim(),
+      });
     });
 
     return reviews;
