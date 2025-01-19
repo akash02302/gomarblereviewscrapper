@@ -48,7 +48,7 @@ Below is a diagram illustrating the system architecture of the Gormarble Assignm
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/gormarbleassignment.git
+   git clone https://github.com/akash02302/gormarbleassignment.git
    cd gormarbleassignment
    ```
 
