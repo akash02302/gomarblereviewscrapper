@@ -3,6 +3,7 @@ Project Title: Review Scraper API
 ## Table of Contents
 - [Solution Approach](#solution-approach)
 - [System Architecture](#system-architecture)
+- [LLM Integration](#how-to-use-the-api)
 - [Instructions to Run the Project](#instructions-to-run-the-project)
 - [API Usage Examples](#api-usage-examples)
 - [Sample Responses](#sample-responses)
@@ -29,12 +30,31 @@ Workflow Diagram-> ./SystemDiagram/workflow_diagram.png
 2. The server processes the request, scrapes the specified URL, and extracts the reviews.
 3. The server responds with the reviews in JSON format or an error message if applicable.
 
+## LLM Integration
+
+The Review Scraper API integrates with Gemini AI for enhanced review processing. To configure the integration, follow these steps:
+
+1. **Obtain Your Gemini API Key**:
+   - Sign up for a Gemini AI account and obtain your API key from the dashboard.
+
+2. **Set Up Environment Variables**:
+   - Create a `.env` file in the `apiserver` directory if it doesn't exist.
+   - Add the following line to the `.env` file:
+     ```
+     GEMINI_API_KEY=your_gemini_api_key_here
+     ```
+
+3. **Using the API Key**:
+   - The API key is loaded using the `dotenv` package, which allows the application to access it securely without hardcoding it in the source code.
+
+Make sure to keep your API key secure and do not share it publicly.
+
 ## Instructions to Run the Project
 
 To run the Review Scraper API locally, follow these steps:
 
 1. **Clone the Repository**:
-   git clone https://github.com/akash02302/reviewScrapperApi.git
+   git clone https://github.com/akash02302/gomarblereviewscrapper.git
    cd reviewScrapperApi
 
 2. **Install Dependencies**:
@@ -43,10 +63,10 @@ To run the Review Scraper API locally, follow these steps:
 
 3. **Start the Server**:
    node server.js
-   The server will start on "http://localhost:3000".
+   The server will start on "http://localhost:5000".
 
 4. **Access the API**:
-   You can now access the API at "http://localhost:3000/reviews?page=<url>".
+   You can now access the API at "http://localhost:5000/reviews?page=<url>".
 
 ## API Usage Examples
 
@@ -55,7 +75,7 @@ To run the Review Scraper API locally, follow these steps:
 To fetch reviews for a product, send a GET request to the `/reviews` endpoint with the product URL as a query parameter.
 
 **Request**(Using window + R -> cmd):
-curl "http://localhost:3000/reviews?page=https://example.com/product"
+curl "http://localhost:5000/reviews?page=https://example.com/product"
 
 ## Sample Responses
 
