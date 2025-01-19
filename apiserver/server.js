@@ -11,8 +11,7 @@ const port = process.env.PORT || 5000;
 app.use(cors({
   origin: [
     'http://localhost:3000',                          // Development
-    'https://gomarblereviewscrapper.vercel.app/',           // Production frontend
-    '*'          // Any other domains
+    'https://gomarblereviewscrapper.vercel.app/'           // Production frontend          // Any other domains
   ],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
