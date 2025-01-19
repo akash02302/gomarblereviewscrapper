@@ -26,28 +26,6 @@ Below is a diagram illustrating the system architecture of the Gormarble Assignm
 | Client (React) | <-----> | API Server (Node) |
 +-------------------+ +---------------------+
 
-┌─────────────┐
-│  React UI   │
-└─────┬───────┘
-      │
-      │
-      ▼
-┌─────────────┐
-│ Express API │
-└─────┬───────┘
-      │
-      │
-      ▼
-┌─────────────┐
-│  Puppeteer  │
-└─────┬───────┘
-      │
-      │
-      ▼
-┌─────────────┐
-│ Gemini AI   │
-└─────────────┘
-
 ### Workflow
 
 1. The user enters a product URL in the client application.
@@ -55,6 +33,10 @@ Below is a diagram illustrating the system architecture of the Gormarble Assignm
 3. The API server scrapes the reviews from the provided URL using Puppeteer.
 4. The server processes the reviews and sends them back to the client.
 5. The client displays the reviews to the user.
+
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  React UI   │ ──► │ Express API │ ──► │  Puppeteer  │ ──► │ Gemini AI   │
+└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
 
 ## Instructions to Run the Project
 
