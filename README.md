@@ -23,10 +23,30 @@ The solution is divided into two main parts:
 Below is a diagram illustrating the system architecture of the Gormarble Assignment:
 
 +-------------------+ +---------------------+
-| | | |
 | Client (React) | <-----> | API Server (Node) |
-| | | |
 +-------------------+ +---------------------+
+
+┌─────────────┐
+│  React UI   │
+└─────┬───────┘
+      │
+      │
+      ▼
+┌─────────────┐
+│ Express API │
+└─────┬───────┘
+      │
+      │
+      ▼
+┌─────────────┐
+│  Puppeteer  │
+└─────┬───────┘
+      │
+      │
+      ▼
+┌─────────────┐
+│ Gemini AI   │
+└─────────────┘
 
 ### Workflow
 
